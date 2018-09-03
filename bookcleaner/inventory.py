@@ -17,11 +17,13 @@ class TradeStrat(object):
         return trade.comdty == self.comdty
 
     def print(self):
+        print(self._get_template())
+
+    def _get_template(self):
         template = '''
         {comdty}: symbol|price
         '''.format(comdty=self.comdty, symbol=self.symbol, price=self.price)
-        print(template)
-
+        return template
 
 class TradeCouple(object):
 
@@ -51,15 +53,14 @@ class SimpleInventory(object):
         self.max_key += 1
 
     def to_evolution(self, booker, ptf_main, ptf_client):
+        res = pd.DataFrame()
         if not self.inv_trade:
-            return pd.DataFrame()
-        else:
-            res = pd.DataFrame()
-            i = 0
-            for _, trade in self.inv_trade.iteritems():
-                res.loc[i] = booker.to_evolution(trade, ptf_main, ptf_client)
-                i += 1
             return res
+        i = 0
+        for _, trade in self.inv_trade.iteritems():
+            res.loc[i] = booker.to_evolution(trade, ptf_main, ptf_client)
+            i += 1
+        return res
 
     def is_date(self, date):
         return utilsbook.get_date(self.date) == utilsbook.get_date(date)
